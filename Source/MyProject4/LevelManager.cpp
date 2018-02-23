@@ -3,27 +3,54 @@
 #include "LevelManager.h"
 #include "ConstructorHelpers.h"
 #include "CoreTypes.h"
+#include "Runtime/MediaAssets/Public/FileMediaSource.h"
+#include "Runtime/Core/Public/Misc/Paths.h"
 #include "Engine.h"
 
 
 // Sets default values
 ALevelManager::ALevelManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	static ConstructorHelpers::FObjectFinder<UMediaPlayer> BarFillObj(TEXT("/Game/Movies/MediaPlayer"));
+	MediaPlayer = BarFillObj.Object;
 }
 
 // Called when the game starts or when spawned
 void ALevelManager::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (AddWidget()) {
+		PlayVideo();
+		PlayMusic();
+	}
 }
 
-// Called every frame
-void ALevelManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+void ALevelManager::PlayMusic() {
+}
 
+void ALevelManager::PlayVideo() {
+	UFileMediaSource* Video = NewObject<UFileMediaSource>();
+	Video->SetFilePath(VideoFilePath);
+	MediaPlayer->OpenSource(Video);
+}
+
+bool ALevelManager::AddWidget() {
+	bool Ok = true;
+
+	if (WidgetName) {
+		pWidget = CreateWidget<UUserWidget>(GetGameInstance(), WidgetName);
+
+		if (pWidget.IsValid()) {
+			pWidget->AddToViewport();
+		}
+		else {
+			Ok = false;
+		}
+	}
+	else {
+		Ok = false;
+	}
+	return Ok;
 }
 
