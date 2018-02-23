@@ -4,7 +4,7 @@
 #include "ConstructorHelpers.h"
 #include "CoreTypes.h"
 #include "Runtime/MediaAssets/Public/FileMediaSource.h"
-#include "Runtime/Core/Public/Misc/Paths.h"
+#include "Runtime/Engine/Classes/Sound/AmbientSound.h"
 #include "Engine.h"
 
 
@@ -27,12 +27,17 @@ void ALevelManager::BeginPlay()
 }
 
 void ALevelManager::PlayMusic() {
+	if (HasMusic) {
+		UGameplayStatics::PlaySound2D(GetWorld(), MusicCue, VolumeLevel, 1.0f, 0.0f);
+	}
 }
 
 void ALevelManager::PlayVideo() {
-	UFileMediaSource* Video = NewObject<UFileMediaSource>();
-	Video->SetFilePath(VideoFilePath);
-	MediaPlayer->OpenSource(Video);
+	if (HasVideo) {
+		UFileMediaSource* Video = NewObject<UFileMediaSource>();
+		Video->SetFilePath(VideoFilePath);
+		MediaPlayer->OpenSource(Video);
+	}
 }
 
 bool ALevelManager::AddWidget() {

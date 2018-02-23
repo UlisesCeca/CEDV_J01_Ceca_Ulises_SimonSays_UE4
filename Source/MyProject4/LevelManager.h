@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Runtime/MediaAssets/Public/MediaPlayer.h"
+#include "Runtime/Engine/Classes/Sound/SoundCue.h"
 #include "LevelManager.generated.h"
 
 UCLASS()
@@ -29,9 +30,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<class UUserWidget> WidgetName;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
+		bool HasVideo;
+	UPROPERTY(EditAnywhere, Category = "Video settings")
 		FString VideoFilePath;
 	UPROPERTY(EditAnywhere, Category = "Music settings")
-		FString MusicFilePath;
+		bool HasMusic;
+	UPROPERTY(EditAnywhere, Category = "Music settings")
+		USoundCue* MusicCue;
 	UPROPERTY(EditAnywhere, Category = "Music settings")
 		float VolumeLevel;
 	UPROPERTY(EditAnywhere, Category = "Level settings")
