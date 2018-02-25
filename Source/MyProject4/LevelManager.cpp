@@ -12,8 +12,6 @@
 // Sets default values
 ALevelManager::ALevelManager()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
 	static ConstructorHelpers::FObjectFinder<UMediaPlayer> BarFillObj(TEXT("/Game/Movies/MediaPlayer"));
 	MediaPlayer = BarFillObj.Object;
 }
@@ -22,42 +20,40 @@ ALevelManager::ALevelManager()
 void ALevelManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
 	SetCursor();
-	if (AddWidget()) {
-		PlayVideo();
-	}
-	PlayMusic();
-	SetMainCamera();
+	if (HasMainCamera) 
+		SetMainCamera();
+	
+	if (AddWidget()) 
+		if (HasMainVideo)
+			PlayVideo();
+	
+	if (HasMusic)
+		PlayMusic();
+
+	if (PlayAnotherLevelAfterMainVideo)
+		GetWorldTimerManager().SetTimer(TimerHandler, this, &ALevelManager::OpenNextLevel, 1.0f, false, MainVideoDuration);
 }
 
-// Called every frame
-void ALevelManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	AccumulatedDeltaTime += DeltaTime;
-
-	if ((AccumulatedDeltaTime >= VideoDuration) && PlayAnotherLevelAfter)
-	{
-		UGameplayStatics::OpenLevel(GetWorld(), NextLevelName);
-	}
+void ALevelManager::OpenNextLevel() {
+	UGameplayStatics::OpenLevel(GetWorld(), NextLevelName);
+	GetWorldTimerManager().ClearTimer(TimerHandler);
 }
 
 void ALevelManager::PlayMusic() {
-	if (HasMusic) {
 		UGameplayStatics::PlaySound2D(GetWorld(), MusicCue, VolumeLevel, 1.0f, 0.0f);
-	}
+	
 }
 
 void ALevelManager::PlayVideo() {
-	if (HasVideo) {
-		UFileMediaSource* Video = NewObject<UFileMediaSource>();
-		Video->SetFilePath(VideoFilePath);
-		MediaPlayer->OpenSource(Video);
+	UFileMediaSource* Video = NewObject<UFileMediaSource>();
+	Video->SetFilePath(MainVideoFilePath);
+	MediaPlayer->OpenSource(Video);
 
-		if (PlayAnotherLevelAfter)
-			VideoDuration = MusicCue->GetDuration();
-	}
+	if (PlayAnotherLevelAfterMainVideo)
+		MainVideoDuration = MusicCue->GetDuration();
 }
 
 bool ALevelManager::AddWidget() {
@@ -80,8 +76,6 @@ bool ALevelManager::AddWidget() {
 }
 
 void ALevelManager::SetCursor() {
-	APlayerController* MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-
 	if (MyController) {
 		MyController->bShowMouseCursor = ShowCursor;
 		MyController->bEnableClickEvents = ShowCursor;
@@ -90,8 +84,6 @@ void ALevelManager::SetCursor() {
 }
 
 void ALevelManager::SetMainCamera() {
-	APlayerController* MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-
 	if (MyController) {
 		MyController->SetViewTarget(MainCamera);
 	}
