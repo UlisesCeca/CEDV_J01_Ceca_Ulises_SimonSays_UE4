@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Runtime/Engine/Classes/Engine/Texture.h"
+#include "Runtime/Engine/Classes/Sound/SoundCue.h"
 #include "MusicalBlock.generated.h"
 
 UCLASS()
@@ -15,14 +17,23 @@ public:
 	// Sets default values for this actor's properties
 	AMusicalBlock();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+private:
+	UPROPERTY(EditAnywhere, Category = "Basic")
+		FString BlockName;
+	UPROPERTY(EditAnywhere, Category = "Textures")
+		UTexture* DefaultTexture;
+	UPROPERTY(EditAnywhere, Category = "Textures")
+		UTexture* WongTexture;
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+		USoundCue* DefaultSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+		USoundCue* WrongSound;
+	UPROPERTY()
+		TWeakObjectPtr<UStaticMeshComponent> StaticMesh;
+	void ChangeTextures();
+	void PlaySound();
+	void Restart();
+	void Play();
+	void PlayBadSequence();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	
-	
 };
