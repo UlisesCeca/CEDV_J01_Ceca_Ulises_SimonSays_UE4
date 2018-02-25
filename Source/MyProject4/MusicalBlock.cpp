@@ -14,5 +14,15 @@ AMusicalBlock::AMusicalBlock()
 	{
 		StaticMesh->SetStaticMesh(MeshAsset.Object);
 	}
+
+}
+
+// Called when the game starts or when spawned
+void AMusicalBlock::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (StaticMesh->GetStaticMesh())
+		StaticMesh->SetMaterial(0, DefaultMaterial);
 }
 
