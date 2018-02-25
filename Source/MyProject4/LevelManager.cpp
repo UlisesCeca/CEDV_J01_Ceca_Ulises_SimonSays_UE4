@@ -28,6 +28,7 @@ void ALevelManager::BeginPlay()
 		PlayVideo();
 	}
 	PlayMusic();
+	SetMainCamera();
 }
 
 // Called every frame
@@ -88,3 +89,10 @@ void ALevelManager::SetCursor() {
 	}
 }
 
+void ALevelManager::SetMainCamera() {
+	APlayerController* MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	if (MyController) {
+		MyController->SetViewTarget(MainCamera);
+	}
+}

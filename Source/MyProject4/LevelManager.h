@@ -29,6 +29,7 @@ private:
 	void PlayMusic();
 	bool AddWidget();
 	void SetCursor();
+	void SetMainCamera();
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<class UUserWidget> WidgetName;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
@@ -47,6 +48,8 @@ private:
 		float VolumeLevel;
 	UPROPERTY(EditAnywhere, Category = "Cursor settings")
 		bool ShowCursor;
+	UPROPERTY(EditAnywhere, Category = "Main Camera")
+		AActor* MainCamera;
 	TWeakObjectPtr<class UUserWidget> pWidget;
 	UMediaPlayer* MediaPlayer;
 	float AccumulatedDeltaTime;
