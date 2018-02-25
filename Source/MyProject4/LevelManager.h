@@ -29,14 +29,16 @@ private:
 	void PlayMusic();
 	bool AddWidget();
 	void SetCursor();
+	void SetMainCamera();
+	void OpenNextLevel();
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<class UUserWidget> WidgetName;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
-		bool HasVideo;
+		bool HasMainVideo;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
-		FString VideoFilePath;
+		FString MainVideoFilePath;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
-		bool PlayAnotherLevelAfter;
+		bool PlayAnotherLevelAfterMainVideo;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
 		FName NextLevelName;
 	UPROPERTY(EditAnywhere, Category = "Music settings")
@@ -47,13 +49,14 @@ private:
 		float VolumeLevel;
 	UPROPERTY(EditAnywhere, Category = "Cursor settings")
 		bool ShowCursor;
+	UPROPERTY(EditAnywhere, Category = "Camera settings")
+		bool HasMainCamera;
+	UPROPERTY(EditAnywhere, Category = "Camera settings")
+		ACameraActor* MainCamera;
 	TWeakObjectPtr<class UUserWidget> pWidget;
 	UMediaPlayer* MediaPlayer;
-	float AccumulatedDeltaTime;
-	float VideoDuration;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	APlayerController* MyController;
+	float MainVideoDuration;
+	FTimerHandle TimerHandler;
 
 };
