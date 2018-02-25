@@ -37,6 +37,12 @@ private:
 		USoundCue* WrongSound;
 	UPROPERTY()
 		UStaticMeshComponent* StaticMesh;
+	UFUNCTION()
+		void CustomOnBeginMouseOver(UPrimitiveComponent* TouchedComponent);
+	UFUNCTION()
+		void CustomOnEndMouseOver(UPrimitiveComponent* TouchedComponent);
+	UFUNCTION()
+		void OnClick(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 	void ChangeTextures();
 	void PlaySound();
 	void Restart();
