@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EBlockEnum.h"
+#include "MusicalBlock.h"
 #include "GameplayManager.generated.h"
 
 UENUM()
@@ -31,13 +31,20 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	FTimerHandle TimerHandler;
+	FTimerDelegate TimerDel;
 	EGameStateEnum GameState;
 	TArray<EBlockEnum> SoundsSequence;
+	TArray<TWeakObjectPtr<AMusicalBlock>> BlocksArray;
 	int16 PlayedBlocks;
 	int16 score;
 	int16 lives;
 	int16 level;
 
+	UFUNCTION()
+		void PlayBlock(int SoundIndex, int BlockIndex);
 	void GenerateRandomSequence();
+	void FindBlocks(); 
+	void IterateOverSoundsAndBlocksToBePlayed();
 	
 };

@@ -25,7 +25,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Basic")
-		EBlockEnum EBlockEnum;
+		EBlockEnum Block;
 	UPROPERTY(EditAnywhere, Category = "Textures")
 		UMaterial* DefaultMaterial;
 	UPROPERTY(EditAnywhere, Category = "Textures")
@@ -47,7 +47,9 @@ private:
 	void ChangeTextures();
 	void PlaySound();
 	void Restart();
-	void Play();
+
+public:
+	void Play(EBlockEnum PlayedBlock);
 	void PlayBadSequence();
 
 };
