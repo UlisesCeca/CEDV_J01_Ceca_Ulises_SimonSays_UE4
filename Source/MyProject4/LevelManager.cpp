@@ -38,7 +38,7 @@ void ALevelManager::BeginPlay()
 }
 
 void ALevelManager::OpenNextLevel() {
-	UGameplayStatics::OpenLevel(GetWorld(), NextLevelName);
+	UGameplayStatics::OpenLevel(GetWorld(), *NextLevel.GetAssetName());
 	GetWorldTimerManager().ClearTimer(TimerHandler);
 }
 

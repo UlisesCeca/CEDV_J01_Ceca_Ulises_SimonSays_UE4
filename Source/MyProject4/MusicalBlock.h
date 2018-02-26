@@ -10,6 +10,7 @@
 #include "EBlockEnum.h"
 #include "MusicalBlock.generated.h"
 
+
 UCLASS()
 class MYPROJECT4_API AMusicalBlock : public AActor
 {
@@ -38,15 +39,17 @@ private:
 		USoundCue* WrongSound;
 	UPROPERTY()
 		UStaticMeshComponent* StaticMesh;
+	FTimerHandle TimerHandler;
+
 	UFUNCTION()
 		void CustomOnBeginMouseOver(UPrimitiveComponent* TouchedComponent);
 	UFUNCTION()
 		void CustomOnEndMouseOver(UPrimitiveComponent* TouchedComponent);
 	UFUNCTION()
 		void OnClick(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
-	void ChangeTextures();
 	void PlaySound();
 	void Restart();
+	void SetDefaultMaterial();
 
 public:
 	void Play(EBlockEnum PlayedBlock);

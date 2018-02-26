@@ -40,7 +40,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Video settings")
 		bool PlayAnotherLevelAfterMainVideo;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
-		FName NextLevelName;
+		TSoftObjectPtr<UWorld> NextLevel;
 	UPROPERTY(EditAnywhere, Category = "Music settings")
 		bool HasMusic;
 	UPROPERTY(EditAnywhere, Category = "Music settings")

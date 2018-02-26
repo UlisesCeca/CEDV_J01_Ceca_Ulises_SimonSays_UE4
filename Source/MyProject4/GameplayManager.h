@@ -10,11 +10,11 @@
 UENUM()
 enum class EGameStateEnum : uint8
 {
-	GE_NotStarted 	UMETA(DisplayName = "NOT STARTED"),
-	GE_Started 		UMETA(DisplayName = "STARTED"),
-	GE_Ended	 	UMETA(DisplayName = "ENDED"),
-	GE_Unblocked	 UMETA(DisplayName = "UNBLOCKED"),
-	GE_Blocked	 	UMETA(DisplayName = "BLOCKED")
+	GE_NotStarted	UMETA(DisplayName = "NOT STARTED"),
+	GE_Started		UMETA(DisplayName = "STARTED"),
+	GE_Ended		UMETA(DisplayName = "ENDED"),
+	GE_Unblocked	UMETA(DisplayName = "UNBLOCKED"),
+	GE_Blocked		UMETA(DisplayName = "BLOCKED")
 };
 
 UCLASS()
@@ -32,19 +32,17 @@ protected:
 
 private:
 	FTimerHandle TimerHandler;
-	FTimerDelegate TimerDel;
 	EGameStateEnum GameState;
 	TArray<EBlockEnum> SoundsSequence;
 	TArray<TWeakObjectPtr<AMusicalBlock>> BlocksArray;
 	int16 PlayedBlocks;
-	int16 score;
-	int16 lives;
-	int16 level;
+	int16 Score;
+	int8 Lives;
+	int8 Level;
 
-	UFUNCTION()
-		void PlayBlock(int SoundIndex, int BlockIndex);
 	void GenerateRandomSequence();
 	void FindBlocks(); 
-	void IterateOverSoundsAndBlocksToBePlayed();
+	void PlayBlocks();
+	EGameStateEnum GetGameState();
 	
 };
