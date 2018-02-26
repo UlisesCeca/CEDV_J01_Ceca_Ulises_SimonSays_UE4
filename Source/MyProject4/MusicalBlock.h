@@ -7,6 +7,7 @@
 #include "Runtime/Engine/Classes/Materials/MaterialInterface.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
 #include "Runtime/Engine/Classes/Sound/SoundCue.h"
+#include "EBlockEnum.h"
 #include "MusicalBlock.generated.h"
 
 UCLASS()
@@ -24,7 +25,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Basic")
-		FString BlockName;
+		EBlockEnum EBlockEnum;
 	UPROPERTY(EditAnywhere, Category = "Textures")
 		UMaterial* DefaultMaterial;
 	UPROPERTY(EditAnywhere, Category = "Textures")
