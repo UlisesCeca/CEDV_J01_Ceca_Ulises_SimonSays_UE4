@@ -45,3 +45,11 @@ void AMusicalBlock::OnClick(UPrimitiveComponent* TouchedComponent, FKey ButtonPr
 {
 	UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
 }
+
+void AMusicalBlock::Play(EBlockEnum PlayedBlock)
+{
+	if (PlayedBlock == Block) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("You've killed all enemies without being hit!!"));
+		UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
+	}
+}

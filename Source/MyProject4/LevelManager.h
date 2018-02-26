@@ -31,7 +31,6 @@ private:
 	void SetCursor();
 	void SetMainCamera();
 	void OpenNextLevel();
-
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<class UUserWidget> WidgetName;
 	UPROPERTY(EditAnywhere, Category = "Video settings")
