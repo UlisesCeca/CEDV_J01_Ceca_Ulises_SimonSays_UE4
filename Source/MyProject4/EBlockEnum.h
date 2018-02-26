@@ -1,4 +1,4 @@
-UENUM()		//"BlueprintType" is essential to include
+UENUM()
 enum class EBlockEnum : uint8
 {
 	BE_Down 	UMETA(DisplayName = "DOWN"),
