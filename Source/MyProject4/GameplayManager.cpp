@@ -17,8 +17,7 @@ AGameplayManager::AGameplayManager()
 void AGameplayManager::BeginPlay()
 {
 	Super::BeginPlay();
-	GenerateRandomSequence();
-	GameState = EGameStateEnum::GE_Started;
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
 
 void AGameplayManager::GenerateRandomSequence()
@@ -29,6 +28,7 @@ void AGameplayManager::GenerateRandomSequence()
 				NewBlock = static_cast<EBlockEnum>(FMath::RandRange(0, 4));
 				SoundsSequence.Add(NewBlock);
 			}
+			GameState = EGameStateEnum::GE_Started;
 		}
 		else {
 			NewBlock = static_cast<EBlockEnum>(FMath::RandRange(0, 4));

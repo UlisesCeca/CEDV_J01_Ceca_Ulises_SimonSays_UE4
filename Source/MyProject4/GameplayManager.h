@@ -37,6 +37,7 @@ private:
 	int16 score;
 	int16 lives;
 	int16 level;
+	FTimerHandle TimerHandler;
 
 	void GenerateRandomSequence();
 	
