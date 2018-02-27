@@ -59,6 +59,8 @@ private:
 public:
 	void Play(EBlockEnum PlayedBlock);
 	void PlayBadSequence();
-	void SetIsActive(bool IsActive);
+	void ActivateBlock();
+	void DeactivateBlock();
+	EBlockEnum GetBlockName();
 
 };

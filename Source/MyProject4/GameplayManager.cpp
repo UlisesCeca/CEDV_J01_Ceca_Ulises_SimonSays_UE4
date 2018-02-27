@@ -12,7 +12,7 @@ AGameplayManager::AGameplayManager()
 	Score = 0;
 	Lives = 5;
 	Level = 0;
-	GameState = EGameStateEnum::GE_NotStarted;
+	GameStarted = false;
 }
 
 // Called when the game starts or when spawned
@@ -26,18 +26,17 @@ void AGameplayManager::BeginPlay()
 void AGameplayManager::GenerateRandomSequence()
 {
 	EBlockEnum NewBlock;
-	if (GameState == EGameStateEnum::GE_NotStarted) {
-		GameState = EGameStateEnum::GE_Blocked;	//so the player can't do anything on the blocks
+	if (!GameStarted) {
 		for (int i = 0; i < 4; i++) {
 			NewBlock = static_cast<EBlockEnum>(FMath::RandRange(0, 3));
 			SoundsSequence.Add(NewBlock);
 		}
 	}
 	else {
-		GameState = EGameStateEnum::GE_Blocked;
 		NewBlock = static_cast<EBlockEnum>(FMath::RandRange(0, 3));
 		SoundsSequence.Add(NewBlock);
 	}
+	GameStarted = true;
 	GetWorldTimerManager().ClearTimer(TimerHandler);
 	PlayBlocks();
 }
@@ -54,7 +53,7 @@ void AGameplayManager::FindBlocks()
 void AGameplayManager::PlayBlocks()
 {
 	if (PlayedBlocks < SoundsSequence.Num()) {	//we play the block if there are still sounds to be played
-		GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::PlayBlocks, 1.0f, false, 1.0f);	//we wait 2s to play next block
+		GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::PlayBlocks, 1.0f, false, 1.0f);	//we wait to play next block
 		for (int j = 0; j < BlocksArray.Num(); j++) {
 			BlocksArray[j]->Play(SoundsSequence[PlayedBlocks]);
 		}
@@ -62,14 +61,54 @@ void AGameplayManager::PlayBlocks()
 	}
 	else {
 		PlayedBlocks = 0;
-		GetWorldTimerManager().ClearTimer(TimerHandler);	//if all blocks have been played then we disable the timer
-		for (int j = 0; j < BlocksArray.Num(); j++) {
-			BlocksArray[j]->SetIsActive(true);
-		}
+		GetWorldTimerManager().ClearTimer(TimerHandler);	//if all blocks have been played then we restart the timer
+		GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::ActivateBlocks, 1.0f, false, 5.0f);	//we activate the blocks so the player can play them
 	}
 }
 
-EGameStateEnum AGameplayManager::GetGameState()
+void AGameplayManager::CheckPlayedBlock(AMusicalBlock &PlayedBlock)
 {
-	return GameState;
+	if (PlayedBlock.GetBlockName() == SoundsSequence[PlayedBlocks]) {
+		PlayedBlocks += 1;
+		Score += 1;
+		if (PlayedBlocks == SoundsSequence.Num()) { //have played all the sounds
+			PlayNextSequence();
+		}
+	}
+	else {
+		PlayedBlock.PlayBadSequence();
+		RestartGame();
+	}
+}
+
+void AGameplayManager::RestartGame() {
+	GameStarted = false;
+	PlayedBlocks = 0;
+	Score = 0;
+	Lives = 5;
+	DeactivateBlocks();
+	SoundsSequence.Empty();
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+}
+
+void AGameplayManager::ActivateBlocks()
+{
+	for (int j = 0; j < BlocksArray.Num(); j++) {
+		BlocksArray[j]->ActivateBlock();
+	}
+	GetWorldTimerManager().ClearTimer(TimerHandler);	//if all blocks have been activated then we restart the timer
+}
+
+void AGameplayManager::DeactivateBlocks()
+{
+	for (int j = 0; j < BlocksArray.Num(); j++) {
+		BlocksArray[j]->DeactivateBlock();
+	}
+}
+
+void AGameplayManager::PlayNextSequence()
+{
+	PlayedBlocks = 0;
+	DeactivateBlocks();
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }

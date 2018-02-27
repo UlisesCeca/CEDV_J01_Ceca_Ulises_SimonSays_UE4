@@ -53,6 +53,7 @@ void AMusicalBlock::OnClick(UPrimitiveComponent* TouchedComponent, FKey ButtonPr
 {
 	if (IsActive) {
 		UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
+		GameplayManager->CheckPlayedBlock(*this);
 	}
 }
 
@@ -61,7 +62,7 @@ void AMusicalBlock::Play(EBlockEnum PlayedBlock)
 	if (PlayedBlock == Block) {
 		UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
 		StaticMesh->SetMaterial(0, HoverMaterial);
-		GetWorldTimerManager().SetTimer(TimerHandler, this, &AMusicalBlock::SetDefaultMaterial, 1.0f, false, 0.5f);
+		GetWorldTimerManager().SetTimer(TimerHandler, this, &AMusicalBlock::SetDefaultMaterial, 1.0f, false, 0.5f); // back to default material
 	}
 }
 
@@ -71,9 +72,15 @@ void AMusicalBlock::SetDefaultMaterial()
 	GetWorldTimerManager().ClearTimer(TimerHandler);
 }
 
-void AMusicalBlock::SetIsActive(bool IsActive)
+void AMusicalBlock::ActivateBlock()
 {
-	this->IsActive = IsActive;
+	IsActive = true;
+}
+
+void AMusicalBlock::DeactivateBlock()
+{
+	IsActive = false;
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AMusicalBlock::SetDefaultMaterial, 1.0f, false, 0.5f); // back to default material for last played block
 }
 
 void AMusicalBlock::FindGameplayManager()
@@ -82,4 +89,16 @@ void AMusicalBlock::FindGameplayManager()
 	{
 		GameplayManager = Cast<AGameplayManager>(*ActorItr);
 	}
+}
+
+void AMusicalBlock::PlayBadSequence()
+{
+	//UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
+	StaticMesh->SetMaterial(0, WrongMaterial);
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AMusicalBlock::SetDefaultMaterial, 1.0f, false, 0.5f); // back to default material
+}
+
+EBlockEnum AMusicalBlock::GetBlockName()
+{
+	return Block;
 }

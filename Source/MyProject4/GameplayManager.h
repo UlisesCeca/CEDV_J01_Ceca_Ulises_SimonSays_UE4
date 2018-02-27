@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EGameStateEnum.h"
 #include "EBlockEnum.h"
 #include "GameplayManager.generated.h"
 
@@ -26,7 +25,7 @@ protected:
 
 private:
 	FTimerHandle TimerHandler;
-	EGameStateEnum GameState;
+	bool GameStarted;
 	TArray<EBlockEnum> SoundsSequence;
 	TArray<TWeakObjectPtr<AMusicalBlock>> BlocksArray;
 	int16 PlayedBlocks;
@@ -34,10 +33,14 @@ private:
 	int8 Lives;
 	int8 Level;
 
+	void PlayNextSequence();
 	void GenerateRandomSequence();
 	void FindBlocks(); 
-	EGameStateEnum GetGameState();
+	void PlayBlocks();
+	void ActivateBlocks();
+	void DeactivateBlocks();
+	void RestartGame();
 
 public:
-	void PlayBlocks();
+	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
 };
