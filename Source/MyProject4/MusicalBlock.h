@@ -10,6 +10,8 @@
 #include "EBlockEnum.h"
 #include "MusicalBlock.generated.h"
 
+class AGameplayManager;
+
 
 UCLASS()
 class MYPROJECT4_API AMusicalBlock : public AActor
@@ -40,6 +42,8 @@ private:
 	UPROPERTY()
 		UStaticMeshComponent* StaticMesh;
 	FTimerHandle TimerHandler;
+	TWeakObjectPtr<AGameplayManager> GameplayManager;
+	bool IsActive;
 
 	UFUNCTION()
 		void CustomOnBeginMouseOver(UPrimitiveComponent* TouchedComponent);
@@ -50,9 +54,11 @@ private:
 	void PlaySound();
 	void Restart();
 	void SetDefaultMaterial();
+	void FindGameplayManager();
 
 public:
 	void Play(EBlockEnum PlayedBlock);
 	void PlayBadSequence();
+	void SetIsActive(bool IsActive);
 
 };

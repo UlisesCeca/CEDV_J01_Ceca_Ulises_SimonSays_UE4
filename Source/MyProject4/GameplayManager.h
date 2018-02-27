@@ -4,18 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MusicalBlock.h"
+#include "EGameStateEnum.h"
+#include "EBlockEnum.h"
 #include "GameplayManager.generated.h"
 
-UENUM()
-enum class EGameStateEnum : uint8
-{
-	GE_NotStarted	UMETA(DisplayName = "NOT STARTED"),
-	GE_Started		UMETA(DisplayName = "STARTED"),
-	GE_Ended		UMETA(DisplayName = "ENDED"),
-	GE_Unblocked	UMETA(DisplayName = "UNBLOCKED"),
-	GE_Blocked		UMETA(DisplayName = "BLOCKED")
-};
+class AMusicalBlock;
+
 
 UCLASS()
 class MYPROJECT4_API AGameplayManager : public AActor
@@ -42,7 +36,8 @@ private:
 
 	void GenerateRandomSequence();
 	void FindBlocks(); 
-	void PlayBlocks();
 	EGameStateEnum GetGameState();
-	
+
+public:
+	void PlayBlocks();
 };

@@ -2,6 +2,7 @@
 
 #include "GameplayManager.h"
 #include "Engine.h"
+#include "MusicalBlock.h"
 
 
 // Sets default values
@@ -62,6 +63,9 @@ void AGameplayManager::PlayBlocks()
 	else {
 		PlayedBlocks = 0;
 		GetWorldTimerManager().ClearTimer(TimerHandler);	//if all blocks have been played then we disable the timer
+		for (int j = 0; j < BlocksArray.Num(); j++) {
+			BlocksArray[j]->SetIsActive(true);
+		}
 	}
 }
 

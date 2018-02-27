@@ -3,6 +3,7 @@
 #include "MusicalBlock.h"
 #include "Engine.h"
 #include "EngineMinimal.h"
+#include "GameplayManager.h"
 
 
 // Sets default values
@@ -10,6 +11,7 @@ AMusicalBlock::AMusicalBlock()
 {
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("BaseMeshComponent");
 	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/musicalblock.musicalblock'"));
+	IsActive = false;
 
 	if (MeshAsset.Succeeded())
 	{
@@ -27,23 +29,31 @@ void AMusicalBlock::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FindGameplayManager();
+
 	if (StaticMesh->GetStaticMesh())
 		StaticMesh->SetMaterial(0, DefaultMaterial);
 }
 
 void AMusicalBlock::CustomOnBeginMouseOver(UPrimitiveComponent* TouchedComponent)
 {
-	StaticMesh->SetMaterial(0, HoverMaterial);
+	if (IsActive) {
+		StaticMesh->SetMaterial(0, HoverMaterial);
+	}
 }
 
 void AMusicalBlock::CustomOnEndMouseOver(UPrimitiveComponent* TouchedComponent)
 {
-	StaticMesh->SetMaterial(0, DefaultMaterial);
+	if (IsActive) {
+		StaticMesh->SetMaterial(0, DefaultMaterial);
+	}
 }
 
 void AMusicalBlock::OnClick(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
 {
-	UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
+	if (IsActive) {
+		UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
+	}
 }
 
 void AMusicalBlock::Play(EBlockEnum PlayedBlock)
@@ -59,4 +69,17 @@ void AMusicalBlock::SetDefaultMaterial()
 {
 	StaticMesh->SetMaterial(0, DefaultMaterial);
 	GetWorldTimerManager().ClearTimer(TimerHandler);
+}
+
+void AMusicalBlock::SetIsActive(bool IsActive)
+{
+	this->IsActive = IsActive;
+}
+
+void AMusicalBlock::FindGameplayManager()
+{
+	for (TActorIterator<AGameplayManager> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		GameplayManager = Cast<AGameplayManager>(*ActorItr);
+	}
 }
