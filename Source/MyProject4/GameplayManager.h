@@ -4,18 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MusicalBlock.h"
+#include "EBlockEnum.h"
 #include "GameplayManager.generated.h"
 
-UENUM()
-enum class EGameStateEnum : uint8
-{
-	GE_NotStarted 	UMETA(DisplayName = "NOT STARTED"),
-	GE_Started 		UMETA(DisplayName = "STARTED"),
-	GE_Ended	 	UMETA(DisplayName = "ENDED"),
-	GE_Unblocked	 UMETA(DisplayName = "UNBLOCKED"),
-	GE_Blocked	 	UMETA(DisplayName = "BLOCKED")
-};
+class AMusicalBlock;
+class ALevelManager;
+
 
 UCLASS()
 class MYPROJECT4_API AGameplayManager : public AActor
@@ -32,19 +26,33 @@ protected:
 
 private:
 	FTimerHandle TimerHandler;
-	FTimerDelegate TimerDel;
-	EGameStateEnum GameState;
+	bool GameStarted;
 	TArray<EBlockEnum> SoundsSequence;
 	TArray<TWeakObjectPtr<AMusicalBlock>> BlocksArray;
+	TWeakObjectPtr<ALevelManager> LevelManager;
 	int16 PlayedBlocks;
-	int16 score;
-	int16 lives;
-	int16 level;
+	int16 Score;
+	int8 Lives;
+	int8 Level;
 
-	UFUNCTION()
-		void PlayBlock(int SoundIndex, int BlockIndex);
+	void PlayNextSequence();
 	void GenerateRandomSequence();
-	void FindBlocks(); 
-	void IterateOverSoundsAndBlocksToBePlayed();
-	
+	void FindBlocks();
+	void FindLevelManager();
+	void PlayBlocks();
+	void ActivateBlocks();
+	void DeactivateBlocks();
+	void ContinueGame();
+	void EndGame();
+	void IncreaseScore(int amount);
+	void DecreaseScore();
+	void ResetScore();
+	void DecreaseLives();
+	void ResetLives();
+	void IncreaseLevel();
+	void ResetLevel();
+	void RestartGame();
+
+public:
+	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
 };

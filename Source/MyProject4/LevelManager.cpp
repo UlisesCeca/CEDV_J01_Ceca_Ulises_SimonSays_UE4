@@ -6,6 +6,8 @@
 #include "Runtime/MediaAssets/Public/FileMediaSource.h"
 #include "Runtime/Engine/Classes/Sound/AmbientSound.h"
 #include "Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h"
+#include "TextWidgetTypes.h"
+#include "TextBlock.h"
 #include "Engine.h"
 
 
@@ -38,7 +40,7 @@ void ALevelManager::BeginPlay()
 }
 
 void ALevelManager::OpenNextLevel() {
-	UGameplayStatics::OpenLevel(GetWorld(), NextLevelName);
+	UGameplayStatics::OpenLevel(GetWorld(), *NextLevel.GetAssetName());
 	GetWorldTimerManager().ClearTimer(TimerHandler);
 }
 
@@ -86,5 +88,12 @@ void ALevelManager::SetCursor() {
 void ALevelManager::SetMainCamera() {
 	if (MyController) {
 		MyController->SetViewTarget(MainCamera);
+	}
+}
+
+void ALevelManager::UpdateWidgetText(const FName WidgetComponentName, FString NewText) {
+	if (pWidget.IsValid()) {
+		pWidgetTextComponent = (UTextBlock*)pWidget->GetWidgetFromName(WidgetComponentName);
+		pWidgetTextComponent->SetText(FText::FromString(NewText));
 	}
 }

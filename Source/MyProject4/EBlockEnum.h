@@ -1,3 +1,8 @@
+
+#pragma once
+
+#include "Engine/UserDefinedEnum.h"
+
 UENUM()
 enum class EBlockEnum : uint8
 {
