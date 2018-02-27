@@ -2,6 +2,7 @@
 
 #include "GameplayManager.h"
 #include "Engine.h"
+#include "LevelManager.h"
 #include "MusicalBlock.h"
 
 
@@ -11,7 +12,7 @@ AGameplayManager::AGameplayManager()
 	PlayedBlocks = 0;
 	Score = 0;
 	Lives = 5;
-	Level = 0;
+	Level = 1;
 	GameStarted = false;
 }
 
@@ -19,6 +20,7 @@ AGameplayManager::AGameplayManager()
 void AGameplayManager::BeginPlay()
 {
 	Super::BeginPlay();
+	FindLevelManager();
 	FindBlocks();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
@@ -30,7 +32,7 @@ void AGameplayManager::GenerateRandomSequence()
 		for (int i = 0; i < 4; i++) {
 			NewBlock = static_cast<EBlockEnum>(FMath::RandRange(0, 3));
 			SoundsSequence.Add(NewBlock);
-		}
+		} 
 	}
 	else {
 		NewBlock = static_cast<EBlockEnum>(FMath::RandRange(0, 3));
@@ -46,6 +48,15 @@ void AGameplayManager::FindBlocks()
 	for (TActorIterator<AMusicalBlock> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		BlocksArray.Add(Cast<AMusicalBlock>(*ActorItr));
+
+	}
+}
+
+void AGameplayManager::FindLevelManager()
+{
+	for (TActorIterator<ALevelManager> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		LevelManager = Cast<ALevelManager>(*ActorItr);
 
 	}
 }
@@ -70,25 +81,79 @@ void AGameplayManager::CheckPlayedBlock(AMusicalBlock &PlayedBlock)
 {
 	if (PlayedBlock.GetBlockName() == SoundsSequence[PlayedBlocks]) {
 		PlayedBlocks += 1;
-		Score += 1;
+		IncreaseScore(1);
 		if (PlayedBlocks == SoundsSequence.Num()) { //have played all the sounds
+			IncreaseScore(5);
+			IncreaseLevel();
 			PlayNextSequence();
 		}
 	}
 	else {
 		PlayedBlock.PlayBadSequence();
-		RestartGame();
+		DecreaseLives();
+		DecreaseScore();
+		if (Lives > 0) {
+			ContinueGame();
+		}
+		else {
+			EndGame();
+		}
 	}
+}
+
+void AGameplayManager::ContinueGame() {
+	RestartGame();
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+}
+
+void AGameplayManager::EndGame() {
+	ResetScore();
+	ResetLives();
+	RestartGame();
 }
 
 void AGameplayManager::RestartGame() {
 	GameStarted = false;
 	PlayedBlocks = 0;
-	Score = 0;
-	Lives = 5;
+	ResetLevel();
 	DeactivateBlocks();
 	SoundsSequence.Empty();
-	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+}
+
+void AGameplayManager::IncreaseScore(int amount) {
+	Score += amount;
+	LevelManager->UpdateWidgetText("scorePoints", FString::FromInt(Score));
+}
+
+void AGameplayManager::DecreaseScore() {
+	if (Score >= 10)
+		Score -= 10;
+	LevelManager->UpdateWidgetText("scorePoints", FString::FromInt(Score));
+}
+
+void AGameplayManager::ResetScore() {
+	Score = 0;
+	LevelManager->UpdateWidgetText("scorePoints", FString::FromInt(Score));
+}
+
+void AGameplayManager::IncreaseLevel() {
+	Level += 1;
+	LevelManager->UpdateWidgetText("levelNumber", FString::FromInt(Level));
+}
+
+void AGameplayManager::ResetLevel() {
+	Level = 1;
+	LevelManager->UpdateWidgetText("levelNumber", FString::FromInt(Level));
+}
+
+void AGameplayManager::DecreaseLives() {
+	Lives -= 1;
+	LevelManager->UpdateWidgetText("livesNumber", FString::FromInt(Lives));
+}
+
+void AGameplayManager::ResetLives() {
+	Lives = 5;
+	LevelManager->UpdateWidgetText("livesNumber", FString::FromInt(Lives));
 }
 
 void AGameplayManager::ActivateBlocks()

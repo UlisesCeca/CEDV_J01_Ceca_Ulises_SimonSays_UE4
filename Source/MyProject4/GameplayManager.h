@@ -8,6 +8,7 @@
 #include "GameplayManager.generated.h"
 
 class AMusicalBlock;
+class ALevelManager;
 
 
 UCLASS()
@@ -28,6 +29,7 @@ private:
 	bool GameStarted;
 	TArray<EBlockEnum> SoundsSequence;
 	TArray<TWeakObjectPtr<AMusicalBlock>> BlocksArray;
+	TWeakObjectPtr<ALevelManager> LevelManager;
 	int16 PlayedBlocks;
 	int16 Score;
 	int8 Lives;
@@ -35,10 +37,20 @@ private:
 
 	void PlayNextSequence();
 	void GenerateRandomSequence();
-	void FindBlocks(); 
+	void FindBlocks();
+	void FindLevelManager();
 	void PlayBlocks();
 	void ActivateBlocks();
 	void DeactivateBlocks();
+	void ContinueGame();
+	void EndGame();
+	void IncreaseScore(int amount);
+	void DecreaseScore();
+	void ResetScore();
+	void DecreaseLives();
+	void ResetLives();
+	void IncreaseLevel();
+	void ResetLevel();
 	void RestartGame();
 
 public:

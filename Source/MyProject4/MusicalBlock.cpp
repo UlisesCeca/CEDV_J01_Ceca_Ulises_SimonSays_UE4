@@ -98,6 +98,7 @@ void AMusicalBlock::PlayBadSequence()
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AMusicalBlock::SetDefaultMaterial, 1.0f, false, 0.5f); // back to default material
 }
 
+
 EBlockEnum AMusicalBlock::GetBlockName()
 {
 	return Block;

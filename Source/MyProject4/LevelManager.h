@@ -54,9 +54,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Camera settings")
 		ACameraActor* MainCamera;
 	TWeakObjectPtr<class UUserWidget> pWidget;
+	TWeakObjectPtr<class UTextBlock> pWidgetTextComponent;
 	UMediaPlayer* MediaPlayer;
 	APlayerController* MyController;
 	float MainVideoDuration;
 	FTimerHandle TimerHandler;
+
+public:
+	void UpdateWidgetText(const FName WidgetComponentName, FString NewText);
 
 };
