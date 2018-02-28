@@ -6,6 +6,7 @@
 #include "MySaveGame.h"
 #include "Record.h"
 #include "MusicalBlock.h"
+#include "WidgetsManager.h"
 
 
 // Sets default values
@@ -22,9 +23,12 @@ AGameplayManager::AGameplayManager()
 void AGameplayManager::BeginPlay()
 {
 	Super::BeginPlay();
+	GetWidgetsManager();
 	FindLevelManager();
-	LoadRecords();
 	FindBlocks();
+	LoadRecords();
+	//Prueba();
+	WidgetsManager->CreateRecordWidget();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
 
@@ -44,6 +48,8 @@ void AGameplayManager::GenerateRandomSequence()
 	GameStarted = true;
 	GetWorldTimerManager().ClearTimer(TimerHandler);
 	PlayBlocks();
+	//pWidget->RemoveFromParent();
+	WidgetsManager->DeleteRecordWidget();
 }
 
 void AGameplayManager::FindBlocks()
@@ -114,7 +120,6 @@ void AGameplayManager::EndGame() {
 	ResetScore();
 	ResetLives();
 	RestartGame();
-	UGameplayStatics::OpenLevel(GetWorld(), "MenuLevel");
 }
 
 void AGameplayManager::RestartGame() {
@@ -209,17 +214,19 @@ void AGameplayManager::CheckSaveFileExists()
 bool AGameplayManager::CheckIfNewRecord()
 {
 	bool NewRecord = false;
-	if (Records.Num() < 10) {	//if there are still slots we can add a new record
-		AddWidget();
-		NewRecord = true;
-	}
-	else {
-		for (int i = 0; i < Records.Num(); i++) {
-			if (Score > Records[i].GetScore()) {	//if the new record is bigger than other we replace it
-				AddWidget();
-				RecordToBeReplaced = i;
-				NewRecord = true;
-				break;
+	if (Score != 0) {
+		if (Records.Num() < 10) {	//if there are still slots we can add a new record
+			WidgetsManager->CreateRecordWidget();
+			NewRecord = true;
+		}
+		else {
+			for (int i = 0; i < Records.Num(); i++) {
+				if (Score > Records[i].GetScore()) {	//if the new record is bigger than other we replace it
+					WidgetsManager->CreateRecordWidget();
+					RecordToBeReplaced = i;
+					NewRecord = true;
+					break;
+				}
 			}
 		}
 	}
@@ -239,19 +246,36 @@ void AGameplayManager::InsertRecord(FString PlayerName)
 		Records[RecordToBeReplaced] = NewRecord;
 	}
 	SaveRecords();
+	WidgetsManager->DeleteRecordWidget();
 	EndGame();
-	if (pRecordWidget.IsValid()) {
-		pRecordWidget->RemoveFromParent();
+}
+
+
+void AGameplayManager::GetWidgetsManager() {
+
+	for (TActorIterator<AWidgetsManager> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		WidgetsManager = Cast<AWidgetsManager>(*ActorItr);
+
 	}
 }
 
-void AGameplayManager::AddWidget() {
+void AGameplayManager::AskPlayerAboutLeaving() {
 
-	if (RecordWidget) {
-		pRecordWidget = CreateWidget<UUserWidget>(GetGameInstance(), RecordWidget);
+	WidgetsManager->CreateBackToMenuWidget();
+}
 
-		if (pRecordWidget.IsValid()) {
-			pRecordWidget->AddToViewport();
+void AGameplayManager::DeleteBackWidget() {
+
+	WidgetsManager->DeleteBackToMenuWidget();
+}
+
+void AGameplayManager::Prueba() {
+	if (Widget) {
+		pWidget = CreateWidget<UUserWidget>(GetGameInstance(), Widget);
+
+		if (pWidget.IsValid()) {
+			pWidget->AddToViewport();
 		}
 	}
 }
