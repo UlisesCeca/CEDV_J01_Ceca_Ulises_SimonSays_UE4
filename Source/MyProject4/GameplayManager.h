@@ -10,6 +10,7 @@
 
 class AMusicalBlock;
 class ALevelManager;
+class AWidgetsManager;
 
 
 UCLASS()
@@ -26,10 +27,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Widget")
-		TSubclassOf<class UUserWidget> RecordWidget;
-	UPROPERTY()
-		TWeakObjectPtr<class UUserWidget> pRecordWidget;
 	FTimerHandle TimerHandler;
 	bool GameStarted;
 	TArray<EBlockEnum> SoundsSequence;
@@ -61,8 +58,6 @@ private:
 	void LoadRecords();
 	void SaveRecords();
 	void CheckSaveFileExists();
-	void EndGame();
-	void AddWidget();
 
 public:
 	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
@@ -70,4 +65,6 @@ public:
 		void InsertRecord(FString PlayerName);
 	UFUNCTION(BlueprintCallable)
 		bool CheckIfNewRecord();
+	UFUNCTION(BlueprintCallable)
+		void EndGame();
 };
