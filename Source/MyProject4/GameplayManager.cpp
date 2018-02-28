@@ -3,6 +3,8 @@
 #include "GameplayManager.h"
 #include "Engine.h"
 #include "LevelManager.h"
+#include "MySaveGame.h"
+#include "Record.h"
 #include "MusicalBlock.h"
 
 
@@ -23,6 +25,19 @@ void AGameplayManager::BeginPlay()
 	FindLevelManager();
 	FindBlocks();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+
+
+
+	/*FRecord Re("Bajo", 0, 0);
+	FRecord De("Alto", 10, 0);
+	FRecord Dq("Alto2", 12, 0);
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	SaveGameInstance->Record.Add(De);
+	SaveGameInstance->Record.Add(Re);
+	SaveGameInstance->Record.Add(Dq);
+	SaveGameInstance->Record.Sort();
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex);*/
+
 }
 
 void AGameplayManager::GenerateRandomSequence()
@@ -41,6 +56,15 @@ void AGameplayManager::GenerateRandomSequence()
 	GameStarted = true;
 	GetWorldTimerManager().ClearTimer(TimerHandler);
 	PlayBlocks();
+
+
+	/*UMySaveGame* LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->SaveSlotName, LoadGameInstance->UserIndex));
+	FRecord Mama = LoadGameInstance->Record[2];
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Mama.GetPlayerName());
+	}*/
 }
 
 void AGameplayManager::FindBlocks()

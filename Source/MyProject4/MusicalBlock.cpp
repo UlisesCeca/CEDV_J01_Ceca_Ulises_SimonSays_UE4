@@ -21,7 +21,6 @@ AMusicalBlock::AMusicalBlock()
 		StaticMesh->OnEndCursorOver.AddDynamic(this, &AMusicalBlock::CustomOnEndMouseOver);
 		StaticMesh->OnClicked.AddDynamic(this, &AMusicalBlock::OnClick);
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -33,6 +32,7 @@ void AMusicalBlock::BeginPlay()
 
 	if (StaticMesh->GetStaticMesh())
 		StaticMesh->SetMaterial(0, DefaultMaterial);
+
 }
 
 void AMusicalBlock::CustomOnBeginMouseOver(UPrimitiveComponent* TouchedComponent)

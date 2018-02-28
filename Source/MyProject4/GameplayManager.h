@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EBlockEnum.h"
+#include "Record.h"
 #include "GameplayManager.generated.h"
 
 class AMusicalBlock;
@@ -34,6 +35,8 @@ private:
 	int16 Score;
 	int8 Lives;
 	int8 Level;
+	FString PlayerName;
+	TArray<FRecord> Records;
 
 	void PlayNextSequence();
 	void GenerateRandomSequence();
@@ -55,4 +58,6 @@ private:
 
 public:
 	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
+	/*UFUNCTION(BlueprintCallable)
+		void InsertRecord(FName PlayerName);*/
 };
