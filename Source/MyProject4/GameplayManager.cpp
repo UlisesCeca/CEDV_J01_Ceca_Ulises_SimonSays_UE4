@@ -14,7 +14,7 @@ AGameplayManager::AGameplayManager()
 {
 	PlayedBlocks = 0;
 	Score = 0;
-	Lives = 2;
+	Lives = 3;
 	Level = 1;
 	GameStarted = false;
 }
@@ -23,12 +23,9 @@ AGameplayManager::AGameplayManager()
 void AGameplayManager::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWidgetsManager();
 	FindLevelManager();
 	FindBlocks();
 	LoadRecords();
-	//Prueba();
-	WidgetsManager->CreateRecordWidget();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
 
@@ -48,8 +45,6 @@ void AGameplayManager::GenerateRandomSequence()
 	GameStarted = true;
 	GetWorldTimerManager().ClearTimer(TimerHandler);
 	PlayBlocks();
-	//pWidget->RemoveFromParent();
-	WidgetsManager->DeleteRecordWidget();
 }
 
 void AGameplayManager::FindBlocks()
@@ -162,7 +157,7 @@ void AGameplayManager::DecreaseLives() {
 }
 
 void AGameplayManager::ResetLives() {
-	Lives = 2;
+	Lives = 3;
 	LevelManager->UpdateWidgetText("livesNumber", FString::FromInt(Lives));
 }
 
@@ -216,13 +211,11 @@ bool AGameplayManager::CheckIfNewRecord()
 	bool NewRecord = false;
 	if (Score != 0) {
 		if (Records.Num() < 10) {	//if there are still slots we can add a new record
-			WidgetsManager->CreateRecordWidget();
 			NewRecord = true;
 		}
 		else {
 			for (int i = 0; i < Records.Num(); i++) {
 				if (Score > Records[i].GetScore()) {	//if the new record is bigger than other we replace it
-					WidgetsManager->CreateRecordWidget();
 					RecordToBeReplaced = i;
 					NewRecord = true;
 					break;
@@ -246,36 +239,5 @@ void AGameplayManager::InsertRecord(FString PlayerName)
 		Records[RecordToBeReplaced] = NewRecord;
 	}
 	SaveRecords();
-	WidgetsManager->DeleteRecordWidget();
 	EndGame();
-}
-
-
-void AGameplayManager::GetWidgetsManager() {
-
-	for (TActorIterator<AWidgetsManager> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		WidgetsManager = Cast<AWidgetsManager>(*ActorItr);
-
-	}
-}
-
-void AGameplayManager::AskPlayerAboutLeaving() {
-
-	WidgetsManager->CreateBackToMenuWidget();
-}
-
-void AGameplayManager::DeleteBackWidget() {
-
-	WidgetsManager->DeleteBackToMenuWidget();
-}
-
-void AGameplayManager::Prueba() {
-	if (Widget) {
-		pWidget = CreateWidget<UUserWidget>(GetGameInstance(), Widget);
-
-		if (pWidget.IsValid()) {
-			pWidget->AddToViewport();
-		}
-	}
 }

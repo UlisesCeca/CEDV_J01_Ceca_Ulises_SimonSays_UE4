@@ -37,19 +37,12 @@ private:
 		TWeakObjectPtr<class UUserWidget> pQuitWidget;
 
 	void CreateNewWidget(TSubclassOf<UUserWidget> Widget, TWeakObjectPtr<UUserWidget> pWidget);
-	void DeleteWidget(TWeakObjectPtr<UUserWidget> pWidget);
 
 public:
 	UFUNCTION(BlueprintCallable)
 		void CreateRecordWidget();
 	UFUNCTION(BlueprintCallable)
-		void DeleteRecordWidget();
-	UFUNCTION(BlueprintCallable)
 		void CreateBackToMenuWidget();
 	UFUNCTION(BlueprintCallable)
-		void DeleteBackToMenuWidget();
-	UFUNCTION(BlueprintCallable)
 		void CreateQuitGameWidget();
-	UFUNCTION(BlueprintCallable)
-		void DeleteQuitGameWidget();
 };

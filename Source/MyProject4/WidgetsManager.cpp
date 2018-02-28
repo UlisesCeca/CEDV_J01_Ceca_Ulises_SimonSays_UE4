@@ -28,12 +28,6 @@ void AWidgetsManager::CreateNewWidget(TSubclassOf<UUserWidget> Widget, TWeakObje
 	}
 }
 
-void AWidgetsManager::DeleteWidget(TWeakObjectPtr<UUserWidget> pWidget) {
-	if (pWidget.IsValid()) {
-		pWidget->RemoveFromViewport();
-	}
-}
-
 void AWidgetsManager::CreateRecordWidget() {
 	CreateNewWidget(RecordWidget, pRecordWidget);
 }
@@ -44,16 +38,4 @@ void AWidgetsManager::CreateBackToMenuWidget() {
 
 void AWidgetsManager::CreateQuitGameWidget() {
 	CreateNewWidget(QuitGameWidget, pQuitWidget);
-}
-
-void AWidgetsManager::DeleteRecordWidget() {
-	DeleteWidget(pRecordWidget);
-}
-
-void AWidgetsManager::DeleteBackToMenuWidget() {
-	DeleteWidget(pBackdWidget);
-}
-
-void AWidgetsManager::DeleteQuitGameWidget() {
-	DeleteWidget(pQuitWidget);
 }
