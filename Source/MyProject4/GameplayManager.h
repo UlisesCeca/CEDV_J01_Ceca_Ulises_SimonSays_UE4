@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EBlockEnum.h"
+#include "Record.h"
 #include "GameplayManager.generated.h"
 
 class AMusicalBlock;
@@ -25,6 +26,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> RecordWidget;
+	UPROPERTY()
+		TWeakObjectPtr<class UUserWidget> pRecordWidget;
 	FTimerHandle TimerHandler;
 	bool GameStarted;
 	TArray<EBlockEnum> SoundsSequence;
@@ -34,6 +39,8 @@ private:
 	int16 Score;
 	int8 Lives;
 	int8 Level;
+	TArray<FRecord> Records;
+	int8 RecordToBeReplaced;
 
 	void PlayNextSequence();
 	void GenerateRandomSequence();
@@ -43,7 +50,6 @@ private:
 	void ActivateBlocks();
 	void DeactivateBlocks();
 	void ContinueGame();
-	void EndGame();
 	void IncreaseScore(int amount);
 	void DecreaseScore();
 	void ResetScore();
@@ -52,7 +58,16 @@ private:
 	void IncreaseLevel();
 	void ResetLevel();
 	void RestartGame();
+	void LoadRecords();
+	void SaveRecords();
+	void CheckSaveFileExists();
+	void EndGame();
+	void AddWidget();
 
 public:
 	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
+	UFUNCTION(BlueprintCallable)
+		void InsertRecord(FString PlayerName);
+	UFUNCTION(BlueprintCallable)
+		bool CheckIfNewRecord();
 };

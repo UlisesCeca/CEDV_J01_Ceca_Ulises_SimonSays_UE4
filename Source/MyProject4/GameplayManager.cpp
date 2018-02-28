@@ -3,6 +3,8 @@
 #include "GameplayManager.h"
 #include "Engine.h"
 #include "LevelManager.h"
+#include "MySaveGame.h"
+#include "Record.h"
 #include "MusicalBlock.h"
 
 
@@ -11,7 +13,7 @@ AGameplayManager::AGameplayManager()
 {
 	PlayedBlocks = 0;
 	Score = 0;
-	Lives = 5;
+	Lives = 2;
 	Level = 1;
 	GameStarted = false;
 }
@@ -21,6 +23,7 @@ void AGameplayManager::BeginPlay()
 {
 	Super::BeginPlay();
 	FindLevelManager();
+	LoadRecords();
 	FindBlocks();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
@@ -83,7 +86,7 @@ void AGameplayManager::CheckPlayedBlock(AMusicalBlock &PlayedBlock)
 		PlayedBlocks += 1;
 		IncreaseScore(1);
 		if (PlayedBlocks == SoundsSequence.Num()) { //have played all the sounds
-			IncreaseScore(5);
+			IncreaseScore(6);
 			IncreaseLevel();
 			PlayNextSequence();
 		}
@@ -96,7 +99,8 @@ void AGameplayManager::CheckPlayedBlock(AMusicalBlock &PlayedBlock)
 			ContinueGame();
 		}
 		else {
-			EndGame();
+			if (!CheckIfNewRecord())
+				EndGame();
 		}
 	}
 }
@@ -110,6 +114,7 @@ void AGameplayManager::EndGame() {
 	ResetScore();
 	ResetLives();
 	RestartGame();
+	UGameplayStatics::OpenLevel(GetWorld(), "MenuLevel");
 }
 
 void AGameplayManager::RestartGame() {
@@ -126,8 +131,8 @@ void AGameplayManager::IncreaseScore(int amount) {
 }
 
 void AGameplayManager::DecreaseScore() {
-	if (Score >= 10)
-		Score -= 10;
+	if (Score >= 5)
+		Score -= 5;
 	LevelManager->UpdateWidgetText("scorePoints", FString::FromInt(Score));
 }
 
@@ -152,7 +157,7 @@ void AGameplayManager::DecreaseLives() {
 }
 
 void AGameplayManager::ResetLives() {
-	Lives = 5;
+	Lives = 2;
 	LevelManager->UpdateWidgetText("livesNumber", FString::FromInt(Lives));
 }
 
@@ -176,4 +181,77 @@ void AGameplayManager::PlayNextSequence()
 	PlayedBlocks = 0;
 	DeactivateBlocks();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+}
+
+void AGameplayManager::LoadRecords()
+{
+	CheckSaveFileExists();
+	UMySaveGame* LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->SaveSlotName, LoadGameInstance->UserIndex));
+	Records = LoadGameInstance->Records;
+}
+
+void AGameplayManager::SaveRecords()
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	SaveGameInstance->Records = this->Records;
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex);
+}
+
+void AGameplayManager::CheckSaveFileExists()
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	if (!UGameplayStatics::DoesSaveGameExist(SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex)) {
+		SaveRecords();
+	}
+}
+
+bool AGameplayManager::CheckIfNewRecord()
+{
+	bool NewRecord = false;
+	if (Records.Num() < 10) {	//if there are still slots we can add a new record
+		AddWidget();
+		NewRecord = true;
+	}
+	else {
+		for (int i = 0; i < Records.Num(); i++) {
+			if (Score > Records[i].GetScore()) {	//if the new record is bigger than other we replace it
+				AddWidget();
+				RecordToBeReplaced = i;
+				NewRecord = true;
+				break;
+			}
+		}
+	}
+	
+	return NewRecord;
+}
+
+void AGameplayManager::InsertRecord(FString PlayerName)
+{
+	FRecord NewRecord(PlayerName, Score, Level);
+
+	if (Records.Num() < 10) {	//if there are still slots we just add a new one and sort the array
+		Records.Add(NewRecord);
+		Records.Sort();
+	}
+	else {	//if no slots then we just replace a lower old one for the new higher one
+		Records[RecordToBeReplaced] = NewRecord;
+	}
+	SaveRecords();
+	EndGame();
+	if (pRecordWidget.IsValid()) {
+		pRecordWidget->RemoveFromParent();
+	}
+}
+
+void AGameplayManager::AddWidget() {
+
+	if (RecordWidget) {
+		pRecordWidget = CreateWidget<UUserWidget>(GetGameInstance(), RecordWidget);
+
+		if (pRecordWidget.IsValid()) {
+			pRecordWidget->AddToViewport();
+		}
+	}
 }
