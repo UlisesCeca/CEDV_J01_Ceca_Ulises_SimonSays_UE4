@@ -210,7 +210,7 @@ bool AGameplayManager::CheckIfNewRecord()
 {
 	bool NewRecord = false;
 	if (Score != 0) {
-		if (Records.Num() < 10) {	//if there are still slots we can add a new record
+		if (Records.Num() < 8) {	//if there are still slots we can add a new record
 			NewRecord = true;
 		}
 		else {
@@ -231,7 +231,7 @@ void AGameplayManager::InsertRecord(FString PlayerName)
 {
 	FRecord NewRecord(PlayerName, Score, Level);
 
-	if (Records.Num() < 10) {	//if there are still slots we just add a new one and sort the array
+	if (Records.Num() < 8) {	//if there are still slots we just add a new one and sort the array
 		Records.Add(NewRecord);
 		Records.Sort();
 	}
