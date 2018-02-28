@@ -26,6 +26,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> RecordWidget;
+	UPROPERTY()
+		TWeakObjectPtr<class UUserWidget> pRecordWidget;
 	FTimerHandle TimerHandler;
 	bool GameStarted;
 	TArray<EBlockEnum> SoundsSequence;
@@ -46,7 +50,6 @@ private:
 	void ActivateBlocks();
 	void DeactivateBlocks();
 	void ContinueGame();
-	void EndGame();
 	void IncreaseScore(int amount);
 	void DecreaseScore();
 	void ResetScore();
@@ -57,10 +60,14 @@ private:
 	void RestartGame();
 	void LoadRecords();
 	void SaveRecords();
-	void CheckIfNewRecord();
+	void CheckSaveFileExists();
+	void EndGame();
+	void AddWidget();
 
 public:
 	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
 	UFUNCTION(BlueprintCallable)
 		void InsertRecord(FString PlayerName);
+	UFUNCTION(BlueprintCallable)
+		bool CheckIfNewRecord();
 };

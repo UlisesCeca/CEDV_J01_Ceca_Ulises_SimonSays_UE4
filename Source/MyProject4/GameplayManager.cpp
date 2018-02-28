@@ -23,8 +23,8 @@ void AGameplayManager::BeginPlay()
 {
 	Super::BeginPlay();
 	FindLevelManager();
-	FindBlocks();
 	LoadRecords();
+	FindBlocks();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
 
@@ -43,7 +43,7 @@ void AGameplayManager::GenerateRandomSequence()
 	}
 	GameStarted = true;
 	GetWorldTimerManager().ClearTimer(TimerHandler);
-	PlayBlocks();	
+	PlayBlocks();
 }
 
 void AGameplayManager::FindBlocks()
@@ -86,7 +86,7 @@ void AGameplayManager::CheckPlayedBlock(AMusicalBlock &PlayedBlock)
 		PlayedBlocks += 1;
 		IncreaseScore(1);
 		if (PlayedBlocks == SoundsSequence.Num()) { //have played all the sounds
-			IncreaseScore(5);
+			IncreaseScore(6);
 			IncreaseLevel();
 			PlayNextSequence();
 		}
@@ -99,7 +99,8 @@ void AGameplayManager::CheckPlayedBlock(AMusicalBlock &PlayedBlock)
 			ContinueGame();
 		}
 		else {
-			EndGame();
+			if (!CheckIfNewRecord())
+				EndGame();
 		}
 	}
 }
@@ -113,6 +114,7 @@ void AGameplayManager::EndGame() {
 	ResetScore();
 	ResetLives();
 	RestartGame();
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
 
 void AGameplayManager::RestartGame() {
@@ -129,8 +131,8 @@ void AGameplayManager::IncreaseScore(int amount) {
 }
 
 void AGameplayManager::DecreaseScore() {
-	if (Score >= 10)
-		Score -= 10;
+	if (Score >= 5)
+		Score -= 5;
 	LevelManager->UpdateWidgetText("scorePoints", FString::FromInt(Score));
 }
 
@@ -183,13 +185,10 @@ void AGameplayManager::PlayNextSequence()
 
 void AGameplayManager::LoadRecords()
 {
+	CheckSaveFileExists();
 	UMySaveGame* LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
 	LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->SaveSlotName, LoadGameInstance->UserIndex));
 	Records = LoadGameInstance->Records;
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Records[0].GetPlayerName());
-	}
 }
 
 void AGameplayManager::SaveRecords()
@@ -199,20 +198,32 @@ void AGameplayManager::SaveRecords()
 	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex);
 }
 
-void AGameplayManager::CheckIfNewRecord()
+void AGameplayManager::CheckSaveFileExists()
 {
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	if (!UGameplayStatics::DoesSaveGameExist(SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex)) {
+		SaveRecords();
+	}
+}
+
+bool AGameplayManager::CheckIfNewRecord()
+{
+	bool NewRecord = false;
 	if (Records.Num() < 10) {	//if there are still slots we can add a new record
-								//mostrarwidget
+		AddWidget();
+		NewRecord = true;
 	}
 	else {
 		for (int i = 0; i < Records.Num(); i++) {
 			if (Score > Records[i].GetScore()) {	//if the new record is bigger than other we replace it
-				//mostrarwidget
+				AddWidget();
 				RecordToBeReplaced = i;
+				NewRecord = true;
 				break;
 			}
 		}
 	}
+	return NewRecord;
 }
 
 void AGameplayManager::InsertRecord(FString PlayerName)
@@ -225,5 +236,21 @@ void AGameplayManager::InsertRecord(FString PlayerName)
 	}
 	else {	//if no slots then we just replace a lower old one for the new higher one
 		Records[RecordToBeReplaced] = NewRecord;
+	}
+	SaveRecords();
+	EndGame();
+	if (pRecordWidget.IsValid()) {
+		pRecordWidget->RemoveFromParent();
+	}
+}
+
+void AGameplayManager::AddWidget() {
+
+	if (RecordWidget) {
+		pRecordWidget = CreateWidget<UUserWidget>(GetGameInstance(), RecordWidget);
+
+		if (pRecordWidget.IsValid()) {
+			pRecordWidget->AddToViewport();
+		}
 	}
 }
