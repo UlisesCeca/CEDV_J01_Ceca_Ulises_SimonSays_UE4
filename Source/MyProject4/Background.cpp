@@ -1,13 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Background.h"
+#include "Engine.h"
+#include "Runtime/MediaAssets/Public/FileMediaSource.h"
 
 
 // Sets default values
 ABackground::ABackground()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	static ConstructorHelpers::FObjectFinder<UMediaPlayer> BarFillObj(TEXT("/Game/Movies/MediaPlayer"));
+	MediaPlayer = BarFillObj.Object; 
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("BaseMeshComponent");
+	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/musicalblock.musicalblock'"));
+
+	if (MeshAsset.Succeeded())
+	{
+		StaticMesh->AttachTo(RootComponent);
+		StaticMesh->SetStaticMesh(MeshAsset.Object);
+	}
 
 }
 
@@ -15,13 +25,12 @@ ABackground::ABackground()
 void ABackground::BeginPlay()
 {
 	Super::BeginPlay();
+	PlayVideo();
 	
 }
 
-// Called every frame
-void ABackground::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+void ABackground::PlayVideo() {
+	UFileMediaSource* Video = NewObject<UFileMediaSource>();
+	Video->SetFilePath(MainVideoFilePath);
+	MediaPlayer->OpenSource(Video);
 }
-

@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Runtime/MediaAssets/Public/MediaPlayer.h"
+#include "Runtime/Engine/Classes/Materials/MaterialInterface.h"
+#include "Runtime/Engine/Classes/Materials/Material.h"
 #include "Background.generated.h"
 
 UCLASS()
@@ -19,10 +22,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
+	UPROPERTY(EditAnywhere, Category = "Video settings")
+		FString MainVideoFilePath;
+	UMediaPlayer* MediaPlayer;
+	UPROPERTY()
+		UStaticMeshComponent* StaticMesh;
 
-	
+	void PlayVideo();
 	
 };

@@ -15,8 +15,6 @@ struct MYPROJECT4_API FRecord
 		FString PlayerName;
 	UPROPERTY()
 		int16 Score;
-	UPROPERTY()
-		int8 Level;
 
 	FString GetPlayerName()
 	{
@@ -28,23 +26,16 @@ struct MYPROJECT4_API FRecord
 		return Score;
 	}
 
-	int8 GetLevel()
-	{
-		return Level;
-	}
-
 	FRecord(FString PlayerName, int16 Score, int8 Level)
 	{
 		this->PlayerName = PlayerName;
 		this->Score = Score;
-		this->Level = Level;
 	}
 
 	FRecord()
 	{
 		this->PlayerName = "";
 		this->Score = 0;
-		this->Level = 0;
 	}
 
 	FORCEINLINE bool operator<(const FRecord &Other) const

@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Record.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "RecordsManager.generated.h"
+
+class ALevelManager;
 
 UCLASS()
 class MYPROJECT4_API ARecordsManager : public AActor
@@ -16,10 +19,24 @@ public:
 	// Sets default values for this actor's properties
 	ARecordsManager();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
+private:
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> Widget;
+	UPROPERTY()
+		TWeakObjectPtr<class UUserWidget> pWidget;
+	TArray<FRecord> Records;
+	TWeakObjectPtr<class UTextBlock> pWidgetTextComponent;
+
+	void GetPlayerNames();
+	void GetScores();
+	void GetLevels();
+	void LoadRecords();
+	void ShowRecordsInScreen();
+	void LoadWidget();
 	
 	
 };
