@@ -25,8 +25,8 @@ ABackground::ABackground()
 void ABackground::BeginPlay()
 {
 	Super::BeginPlay();
+
 	PlayVideo();
-	
 }
 
 void ABackground::PlayVideo() {

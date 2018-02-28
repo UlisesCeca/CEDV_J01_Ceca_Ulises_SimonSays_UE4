@@ -25,8 +25,10 @@ void AGameplayManager::BeginPlay()
 	Super::BeginPlay();
 	FindLevelManager();
 	FindBlocks();
+	GetWidgetsManager();
 	LoadRecords();
-	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+	WidgetsManager->CreateReadyWidget();
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 3.0f);
 }
 
 void AGameplayManager::GenerateRandomSequence()
@@ -67,6 +69,7 @@ void AGameplayManager::FindLevelManager()
 
 void AGameplayManager::PlayBlocks()
 {
+	WidgetsManager->CreateListenWidget();
 	if (PlayedBlocks < SoundsSequence.Num()) {	//we play the block if there are still sounds to be played
 		GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::PlayBlocks, 1.0f, false, 1.0f);	//we wait to play next block
 		for (int j = 0; j < BlocksArray.Num(); j++) {
@@ -77,7 +80,8 @@ void AGameplayManager::PlayBlocks()
 	else {
 		PlayedBlocks = 0;
 		GetWorldTimerManager().ClearTimer(TimerHandler);	//if all blocks have been played then we restart the timer
-		GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::ActivateBlocks, 1.0f, false, 5.0f);	//we activate the blocks so the player can play them
+		GetWorldTimerManager().SetTimer(TimerHandler2, this, &AGameplayManager::PlayReadyNotif, 1.0f, false, 1.0f);
+		GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::ActivateBlocks, 1.0f, false, 4.0f);	//we activate the blocks so the player can play them
 	}
 }
 
@@ -100,15 +104,14 @@ void AGameplayManager::CheckPlayedBlock(AMusicalBlock &PlayedBlock)
 			ContinueGame();
 		}
 		else {
-			if (!CheckIfNewRecord())
-				EndGame();
+				WidgetsManager->CreateLostWidget();
 		}
 	}
 }
 
 void AGameplayManager::ContinueGame() {
 	RestartGame();
-	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 3.0f);
 }
 
 void AGameplayManager::EndGame() {
@@ -163,6 +166,7 @@ void AGameplayManager::ResetLives() {
 
 void AGameplayManager::ActivateBlocks()
 {
+	WidgetsManager->CreateGoWidget();
 	for (int j = 0; j < BlocksArray.Num(); j++) {
 		BlocksArray[j]->ActivateBlock();
 	}
@@ -180,7 +184,7 @@ void AGameplayManager::PlayNextSequence()
 {
 	PlayedBlocks = 0;
 	DeactivateBlocks();
-	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 3.0f);
 }
 
 void AGameplayManager::LoadRecords()
@@ -240,4 +244,18 @@ void AGameplayManager::InsertRecord(FString PlayerName)
 	}
 	SaveRecords();
 	EndGame();
+}
+
+void AGameplayManager::GetWidgetsManager()
+{
+	for (TActorIterator<AWidgetsManager> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		WidgetsManager = Cast<AWidgetsManager>(*ActorItr);
+
+	}
+}
+
+void AGameplayManager::PlayReadyNotif()
+{
+	WidgetsManager->CreateReadyWidget();
 }

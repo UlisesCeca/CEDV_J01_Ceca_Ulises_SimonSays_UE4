@@ -93,7 +93,7 @@ void AMusicalBlock::FindGameplayManager()
 
 void AMusicalBlock::PlayBadSequence()
 {
-	//UGameplayStatics::PlaySound2D(GetWorld(), DefaultSound, 1.0f, 1.0f, 0.0f);
+	UGameplayStatics::PlaySound2D(GetWorld(), WrongSound, 1.0f, 1.0f, 0.0f);
 	StaticMesh->SetMaterial(0, WrongMaterial);
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AMusicalBlock::SetDefaultMaterial, 1.0f, false, 0.5f); // back to default material
 }
