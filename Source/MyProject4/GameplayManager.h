@@ -36,6 +36,7 @@ private:
 	int8 Lives;
 	int8 Level;
 	TArray<FRecord> Records;
+	int8 RecordToBeReplaced;
 
 	void PlayNextSequence();
 	void GenerateRandomSequence();
@@ -55,9 +56,11 @@ private:
 	void ResetLevel();
 	void RestartGame();
 	void LoadRecords();
+	void SaveRecords();
+	void CheckIfNewRecord();
 
 public:
 	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
-	/*UFUNCTION(BlueprintCallable)
-		void InsertRecord(FName PlayerName);*/
+	UFUNCTION(BlueprintCallable)
+		void InsertRecord(FString PlayerName);
 };

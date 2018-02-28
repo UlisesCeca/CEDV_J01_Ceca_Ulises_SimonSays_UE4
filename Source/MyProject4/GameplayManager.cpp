@@ -24,20 +24,8 @@ void AGameplayManager::BeginPlay()
 	Super::BeginPlay();
 	FindLevelManager();
 	FindBlocks();
+	LoadRecords();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
-
-
-
-	/*FRecord Re("Bajo", 0, 0);
-	FRecord De("Alto", 10, 0);
-	FRecord Dq("Alto2", 12, 0);
-	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
-	SaveGameInstance->Record.Add(De);
-	SaveGameInstance->Record.Add(Re);
-	SaveGameInstance->Record.Add(Dq);
-	SaveGameInstance->Record.Sort();
-	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex);*/
-
 }
 
 void AGameplayManager::GenerateRandomSequence()
@@ -55,10 +43,7 @@ void AGameplayManager::GenerateRandomSequence()
 	}
 	GameStarted = true;
 	GetWorldTimerManager().ClearTimer(TimerHandler);
-	PlayBlocks();
-
-
-	
+	PlayBlocks();	
 }
 
 void AGameplayManager::FindBlocks()
@@ -203,8 +188,42 @@ void AGameplayManager::LoadRecords()
 	Records = LoadGameInstance->Records;
 	if (GEngine)
 	{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Records[0].GetPlayerName());
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Records[0].GetPlayerName());
 	}
 }
 
+void AGameplayManager::SaveRecords()
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	SaveGameInstance->Records = this->Records;
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex);
+}
 
+void AGameplayManager::CheckIfNewRecord()
+{
+	if (Records.Num() < 10) {	//if there are still slots we can add a new record
+								//mostrarwidget
+	}
+	else {
+		for (int i = 0; i < Records.Num(); i++) {
+			if (Score > Records[i].GetScore()) {	//if the new record is bigger than other we replace it
+				//mostrarwidget
+				RecordToBeReplaced = i;
+				break;
+			}
+		}
+	}
+}
+
+void AGameplayManager::InsertRecord(FString PlayerName)
+{
+	FRecord NewRecord(PlayerName, Score, Level);
+
+	if (Records.Num() < 10) {	//if there are still slots we just add a new one and sort the array
+		Records.Add(NewRecord);
+		Records.Sort();
+	}
+	else {	//if no slots then we just replace a lower old one for the new higher one
+		Records[RecordToBeReplaced] = NewRecord;
+	}
+}
