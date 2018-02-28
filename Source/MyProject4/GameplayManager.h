@@ -35,7 +35,6 @@ private:
 	int16 Score;
 	int8 Lives;
 	int8 Level;
-	FString PlayerName;
 	TArray<FRecord> Records;
 
 	void PlayNextSequence();
@@ -55,6 +54,7 @@ private:
 	void IncreaseLevel();
 	void ResetLevel();
 	void RestartGame();
+	void LoadRecords();
 
 public:
 	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);

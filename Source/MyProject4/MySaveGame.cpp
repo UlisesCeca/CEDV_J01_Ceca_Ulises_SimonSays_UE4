@@ -6,7 +6,7 @@
 
 UMySaveGame::UMySaveGame()
 {
-	SaveSlotName = TEXT("TestSaveSlot");
+	SaveSlotName = TEXT("SlotSave");
 	UserIndex = 0;
 }
 

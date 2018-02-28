@@ -58,13 +58,7 @@ void AGameplayManager::GenerateRandomSequence()
 	PlayBlocks();
 
 
-	/*UMySaveGame* LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
-	LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->SaveSlotName, LoadGameInstance->UserIndex));
-	FRecord Mama = LoadGameInstance->Record[2];
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Mama.GetPlayerName());
-	}*/
+	
 }
 
 void AGameplayManager::FindBlocks()
@@ -201,3 +195,16 @@ void AGameplayManager::PlayNextSequence()
 	DeactivateBlocks();
 	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
 }
+
+void AGameplayManager::LoadRecords()
+{
+	UMySaveGame* LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	LoadGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->SaveSlotName, LoadGameInstance->UserIndex));
+	Records = LoadGameInstance->Records;
+	if (GEngine)
+	{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Records[0].GetPlayerName());
+	}
+}
+
+

@@ -18,7 +18,7 @@ class MYPROJECT4_API UMySaveGame : public USaveGame
 public:
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
-		TArray<FRecord> Record;
+		TArray<FRecord> Records;
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 		FString SaveSlotName;
