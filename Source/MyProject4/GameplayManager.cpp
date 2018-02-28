@@ -13,7 +13,7 @@ AGameplayManager::AGameplayManager()
 {
 	PlayedBlocks = 0;
 	Score = 0;
-	Lives = 5;
+	Lives = 2;
 	Level = 1;
 	GameStarted = false;
 }
@@ -114,7 +114,7 @@ void AGameplayManager::EndGame() {
 	ResetScore();
 	ResetLives();
 	RestartGame();
-	GetWorldTimerManager().SetTimer(TimerHandler, this, &AGameplayManager::GenerateRandomSequence, 1.0f, false, 5.0f);
+	UGameplayStatics::OpenLevel(GetWorld(), "MenuLevel");
 }
 
 void AGameplayManager::RestartGame() {
@@ -157,7 +157,7 @@ void AGameplayManager::DecreaseLives() {
 }
 
 void AGameplayManager::ResetLives() {
-	Lives = 5;
+	Lives = 2;
 	LevelManager->UpdateWidgetText("livesNumber", FString::FromInt(Lives));
 }
 
@@ -223,6 +223,7 @@ bool AGameplayManager::CheckIfNewRecord()
 			}
 		}
 	}
+	
 	return NewRecord;
 }
 
