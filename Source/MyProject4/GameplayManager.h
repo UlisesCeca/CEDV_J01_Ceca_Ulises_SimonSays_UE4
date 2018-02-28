@@ -28,6 +28,7 @@ protected:
 
 private:
 	FTimerHandle TimerHandler;
+	FTimerHandle TimerHandler2;
 	bool GameStarted;
 	TArray<EBlockEnum> SoundsSequence;
 	TArray<TWeakObjectPtr<AMusicalBlock>> BlocksArray;
@@ -38,6 +39,7 @@ private:
 	int8 Level;
 	TArray<FRecord> Records;
 	int8 RecordToBeReplaced;
+	TWeakObjectPtr<AWidgetsManager> WidgetsManager;
 
 	void PlayNextSequence();
 	void GenerateRandomSequence();
@@ -46,7 +48,6 @@ private:
 	void PlayBlocks();
 	void ActivateBlocks();
 	void DeactivateBlocks();
-	void ContinueGame();
 	void IncreaseScore(int amount);
 	void DecreaseScore();
 	void ResetScore();
@@ -58,6 +59,8 @@ private:
 	void LoadRecords();
 	void SaveRecords();
 	void CheckSaveFileExists();
+	void GetWidgetsManager();
+	void PlayReadyNotif();
 
 public:
 	void CheckPlayedBlock(AMusicalBlock &PlayedBlock);
@@ -67,4 +70,6 @@ public:
 		bool CheckIfNewRecord();
 	UFUNCTION(BlueprintCallable)
 		void EndGame();
+	UFUNCTION(BlueprintCallable)
+		void ContinueGame();
 };

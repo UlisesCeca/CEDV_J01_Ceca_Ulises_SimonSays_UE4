@@ -29,12 +29,28 @@ private:
 		TSubclassOf<class UUserWidget> BacToMenukWidget;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<class UUserWidget> QuitGameWidget;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> LostWidget;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> ReadyWidget;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> ListenWidget;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> GoWidget;
 	UPROPERTY()
 		TWeakObjectPtr<class UUserWidget> pRecordWidget;
 	UPROPERTY()
 		TWeakObjectPtr<class UUserWidget> pBackdWidget;
 	UPROPERTY()
 		TWeakObjectPtr<class UUserWidget> pQuitWidget;
+	UPROPERTY()
+		TWeakObjectPtr<class UUserWidget> pLostWidget;
+	UPROPERTY()
+		TWeakObjectPtr<class UUserWidget> pReadyWidget;
+	UPROPERTY()
+		TWeakObjectPtr<class UUserWidget> pListenWidget;
+	UPROPERTY()
+		TWeakObjectPtr<class UUserWidget> pGoWidget;
 
 	void CreateNewWidget(TSubclassOf<UUserWidget> Widget, TWeakObjectPtr<UUserWidget> pWidget);
 
@@ -45,4 +61,12 @@ public:
 		void CreateBackToMenuWidget();
 	UFUNCTION(BlueprintCallable)
 		void CreateQuitGameWidget();
+	UFUNCTION(BlueprintCallable)
+		void CreateLostWidget();
+	UFUNCTION(BlueprintCallable)
+		void CreateReadyWidget();
+	UFUNCTION(BlueprintCallable)
+		void CreateListenWidget();
+	UFUNCTION(BlueprintCallable)
+		void CreateGoWidget();
 };

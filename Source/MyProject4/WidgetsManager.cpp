@@ -39,3 +39,18 @@ void AWidgetsManager::CreateBackToMenuWidget() {
 void AWidgetsManager::CreateQuitGameWidget() {
 	CreateNewWidget(QuitGameWidget, pQuitWidget);
 }
+
+void AWidgetsManager::CreateLostWidget() {
+	CreateNewWidget(LostWidget, pLostWidget);
+}
+void AWidgetsManager::CreateReadyWidget() {
+	CreateNewWidget(ReadyWidget, pReadyWidget);
+}
+
+void AWidgetsManager::CreateListenWidget() {
+	CreateNewWidget(ListenWidget, pListenWidget);
+}
+
+void AWidgetsManager::CreateGoWidget() {
+	CreateNewWidget(GoWidget, pGoWidget);
+}
